@@ -1,18 +1,8 @@
 <div align="center" style="margin-bottom:20px">
   <img src="assets/logo.png" alt="booking-microservices-java-spring-boot" />
-    <div align="center">
-                 <a href="https://github.com/meysamhadeli/booking-microservices-java-spring-boot/blob/main/LICENSE"><img alt="build-status"          src="https://img.shields.io/github/license/meysamhadeli/booking-microservices-java-spring-boot?color=%234275f5&style=flat-square"/></a>
-    </div>
 </div>
 
 > 🚀 **A practical and imaginary microservices for implementing an infrastructure for up and running distributed system with the latest technology and architecture like Vertical Slice Architecture, Event Driven Architecture, CQRS, DDD, gRpc, MongoDB, RabbitMq in Java Spring Boot.**
-
-**You can find `.Net` ported of this project in this link:**
-🔗 [booking-microservices](https://github.com/meysamhadeli/booking-microservices)
-
-<div>
-  <a href='https://codespaces.new/meysamhadeli/booking-microservices-java-spring-boot?quickstart=1'><img alt='Open in GitHub Codespaces' src='https://github.com/codespaces/badge.svg'></a>
-</div>
 
 # Table of Contents
 
@@ -58,7 +48,7 @@
 
 > 🌀This project is a work in progress, new features will be added over time.🌀
 
-I will try to register future goals and additions in the [Issues](https://github.com/meysamhadeli/booking-microservices-java-spring-boot/issues) section of this repository.
+Future goals and additions will be tracked over time.
 
 High-level plan is represented in the table
 
@@ -187,7 +177,7 @@ Thanks a bunch for supporting me!
 
 ## Contribution
 
-Thanks to all [contributors](https://github.com/meysamhadeli/booking-microservices-java-spring-boot/graphs/contributors), you're awesome and this wouldn't be possible without you! The goal is to build a categorized, community-driven collection of very well-known resources.
+Thanks to all contributors, you're awesome and this wouldn't be possible without you! The goal is to build a categorized, community-driven collection of very well-known resources.
 
 Please follow this [contribution guideline](./CONTRIBUTION.md) to submit a pull request or create the issue.
 
@@ -196,6 +186,3 @@ Please follow this [contribution guideline](./CONTRIBUTION.md) to submit a pull 
 - [https://github.com/jbogard/ContosoUniversityDotNetCore-Pages](https://github.com/jbogard/ContosoUniversityDotNetCore-Pages)
 - [https://github.com/kgrzybek/modular-monolith-with-ddd](https://github.com/kgrzybek/modular-monolith-with-ddd)
 - [https://github.com/oskardudycz/cqrs-is-simpler-with-java](https://github.com/oskardudycz/cqrs-is-simpler-with-java)
-
-## License
-This project is made available under the MIT license. See [LICENSE](https://github.com/meysamhadeli/booking-microservices-java-spring-boot/blob/main/LICENSE) for details.
