@@ -20,7 +20,9 @@ public class CreateFlightCommandFake {
       new BigDecimal(120),
       LocalDateTime.now(),
       FlightStatus.Flying,
-      new BigDecimal(200L)
+      new BigDecimal(200L),
+      180,
+      6
     );
   }
 }

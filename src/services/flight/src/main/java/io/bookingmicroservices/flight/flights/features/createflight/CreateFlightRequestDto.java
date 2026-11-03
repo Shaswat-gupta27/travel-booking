@@ -16,5 +16,7 @@ public record CreateFlightRequestDto(
   BigDecimal durationMinutes,
   LocalDateTime flightDate,
   FlightStatus status,
-  BigDecimal price){
+  BigDecimal price,
+  Integer numberOfSeats,
+  Integer seatsPerRow){
 }

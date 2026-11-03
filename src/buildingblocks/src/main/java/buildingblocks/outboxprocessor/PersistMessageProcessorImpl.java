@@ -151,7 +151,8 @@ public class PersistMessageProcessorImpl implements PersistMessageProcessor {
 
       if (data instanceof IntegrationEvent integrationEvent) {
 
-        this.rabbitTemplate.convertSendAndReceive(
+        // Fire and forget: convertSendAndReceive waits for a reply that no consumer sends, which stalled every event for 5 s.
+        this.rabbitTemplate.convertAndSend(
           rabbitProperties.getTemplate().getExchange(),
           message.getDataType(),
           JsonConverterUtils.serializeObject(integrationEvent), msg -> {

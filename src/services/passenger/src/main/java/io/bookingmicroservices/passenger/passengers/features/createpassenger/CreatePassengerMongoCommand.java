@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record CreatePassengerMongoCommand(
         UUID id,
+        String userId,
         String name,
         String passportNumber,
         PassengerType passengerType,

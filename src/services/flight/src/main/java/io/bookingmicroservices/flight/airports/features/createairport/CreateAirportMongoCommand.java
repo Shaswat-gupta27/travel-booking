@@ -10,5 +10,8 @@ public record CreateAirportMongoCommand(
   String name,
   String code,
   String address,
+  String city,
+  String region,
+  String country,
   boolean isDeleted) implements ICommand<Unit>, InternalCommand {
 }

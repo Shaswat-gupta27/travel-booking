@@ -8,6 +8,7 @@ service FlightService {
   rpc GetById (GetByIdRequestDto) returns (FlightResponseDto);
   rpc GetAvailableSeats (GetAvailableSeatsRequestDto) returns (GetAvailableSeatsResponseDto);
   rpc ReserveSeat (ReserveSeatRequestDto) returns (SeatResponseDto);
+  rpc ReleaseSeat (ReleaseSeatRequestDto) returns (SeatResponseDto);
 }
 
 message GetByIdRequestDto {
@@ -46,6 +47,11 @@ message SeatResponseDto {
 
 
 message ReserveSeatRequestDto {
+  string FlightId = 1;
+  string SeatNumber = 2;
+}
+
+message ReleaseSeatRequestDto {
   string FlightId = 1;
   string SeatNumber = 2;
 }

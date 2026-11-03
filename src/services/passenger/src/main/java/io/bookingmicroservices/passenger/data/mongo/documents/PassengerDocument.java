@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.UUID;
 
+import java.util.UUID;
 
 @Document(collection = "passengers")
 @NoArgsConstructor
@@ -20,6 +20,7 @@ public class PassengerDocument {
     @Id
     private ObjectId id;
     private UUID passengerId;
+    private String userId;
     private String name;
     private String passportNumber;
     @Enumerated(EnumType.STRING)
@@ -27,8 +28,9 @@ public class PassengerDocument {
     private int age;
     private boolean isDeleted;
 
-    public PassengerDocument(UUID passengerId, String name, String passportNumber , PassengerType passengerType, int age, boolean isDeleted) {
+    public PassengerDocument(UUID passengerId, String userId, String name, String passportNumber, PassengerType passengerType, int age, boolean isDeleted) {
         this.passengerId = passengerId;
+        this.userId = userId;
         this.name = name;
         this.passportNumber = passportNumber;
         this.passengerType = passengerType;
@@ -36,4 +38,3 @@ public class PassengerDocument {
         this.isDeleted = isDeleted;
     }
 }
-

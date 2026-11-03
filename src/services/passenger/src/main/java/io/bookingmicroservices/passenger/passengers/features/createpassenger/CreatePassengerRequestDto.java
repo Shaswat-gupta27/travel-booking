@@ -4,7 +4,7 @@ import io.bookingmicroservices.passenger.passengers.enums.PassengerType;
 
 public record CreatePassengerRequestDto(
         String name,
-        String PassportNumber,
+        String passportNumber,
         PassengerType passengerType,
         int age){
 }

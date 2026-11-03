@@ -1,5 +1,7 @@
 package io.bookingmicroservices.flight.data.jpa.repositories;
 
+import io.bookingmicroservices.flight.airports.valueobjects.Code;
+
 import io.bookingmicroservices.flight.airports.features.Mappings;
 import io.bookingmicroservices.flight.airports.models.Airport;
 import io.bookingmicroservices.flight.data.jpa.entities.AirportEntity;
@@ -11,5 +13,5 @@ import java.util.UUID;
 
 @Repository
 public interface AirportRepository extends JpaRepository<AirportEntity, UUID> {
-  AirportEntity findAirportByCodeAndIsDeletedFalse(String code);
+  AirportEntity findAirportByCodeAndIsDeletedFalse(Code code);
 }

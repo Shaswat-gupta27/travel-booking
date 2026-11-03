@@ -72,6 +72,12 @@ public class CustomProblemDetailsHandler extends ResponseEntityExceptionHandler 
         HttpStatus.CONFLICT
       );
 
+      case org.springframework.security.access.AccessDeniedException deniedEx -> new ExceptionDetails(
+        deniedEx.getMessage(),
+        deniedEx.getClass().getSimpleName(),
+        HttpStatus.FORBIDDEN
+      );
+
       case io.grpc.StatusRuntimeException grpcEx -> new ExceptionDetails(
         grpcEx.getMessage(),
         "GrpcException",

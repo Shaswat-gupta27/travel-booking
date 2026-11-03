@@ -24,7 +24,8 @@ public class PassengerServiceGrpcImpl extends PassengerServiceGrpc.PassengerServ
     @Override
     public void getById(Passenger.PassengerRequestDto request, StreamObserver<Passenger.PassengerResponseDto> responseObserver) {
 
-        PassengerDto result = mediator.send(new GetPassengerByIdQuery(UUID.fromString(request.getId())));
+        // Internal call: the caller (booking) does the ownership check from the owner id in the response.
+        PassengerDto result = mediator.send(new GetPassengerByIdQuery(UUID.fromString(request.getId()), null, true));
         Passenger.PassengerResponseDto passengerResponseDtoGrpc = toPassengerResponseDtoGrpc(result);
 
         responseObserver.onNext(passengerResponseDtoGrpc);

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public record PassengerCreatedDomainEvent(
         UUID id,
+        String userId,
         String name,
         String passportNumber,
         PassengerType passengerType,

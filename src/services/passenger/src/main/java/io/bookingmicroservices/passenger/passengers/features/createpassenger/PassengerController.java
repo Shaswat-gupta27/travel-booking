@@ -6,6 +6,7 @@ import io.bookingmicroservices.passenger.passengers.features.Mappings;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,9 @@ public class PassengerController {
     }
 
     @PostMapping()
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<PassengerDto> createPassenger(@RequestBody CreatePassengerRequestDto createPassengerRequestDto) {
-        CreatePassengerCommand command = Mappings.toCreatePassengerCommand(createPassengerRequestDto);
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    public ResponseEntity<PassengerDto> createPassenger(@RequestBody CreatePassengerRequestDto createPassengerRequestDto, Authentication authentication) {
+        CreatePassengerCommand command = Mappings.toCreatePassengerCommand(createPassengerRequestDto, authentication.getName());
         var result = this.mediator.send(command);
         return ResponseEntity.ok().body(result);
     }

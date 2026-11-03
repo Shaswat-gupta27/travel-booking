@@ -59,7 +59,14 @@ public class CreateBookingCommandHandler implements ICommandHandler<CreateBookin
             throw new PassengerNotFoundException();
         }
 
-        Flight.SeatResponseDto emptySeat = flightServiceBlockingStub.getAvailableSeats(toGetAvailableSeatsResponseDto(command)).getSeatsDtoList().stream().findAny().orElse(null);
+        // Travellers can only book for passengers they saved themselves; admins may book for anyone.
+        if (!command.isAdmin() && !command.userId().equals(passenger.getUserId())) {
+            throw new PassengerNotFoundException();
+        }
+
+        Flight.SeatResponseDto emptySeat = flightServiceBlockingStub.getAvailableSeats(toGetAvailableSeatsResponseDto(command)).getSeatsDtoList().stream()
+                .filter(seat -> seat.getFlightId().equalsIgnoreCase(flight.getId()))
+                .findAny().orElse(null);
 
         if(emptySeat == null){
             throw new SeatNumberIsNotAvailableException();
@@ -71,10 +78,12 @@ public class CreateBookingCommandHandler implements ICommandHandler<CreateBookin
             throw new BookingAlreadyExistException();
         }
 
-       Booking booking = Booking.create(new BookingId(command.id()), new PassengerInfo(passenger.getName()), new Trip(flight.getFlightNumber(),
+       Booking booking = Booking.create(new BookingId(command.id()), command.userId(), new PassengerInfo(passenger.getName()), new Trip(flight.getFlightNumber(),
                 UUID.fromString(flight.getAircraftId()), UUID.fromString(flight.getDepartureAirportId()),
                 UUID.fromString(flight.getArriveAirportId()), ProtobufUtils.toLocalDateTime(flight.getFlightDate()),
-                BigDecimal.ONE, command.description(), Objects.requireNonNull(emptySeat).getSeatNumber()));
+                BigDecimal.valueOf(flight.getPrice()), command.description(), Objects.requireNonNull(emptySeat).getSeatNumber(),
+                UUID.fromString(flight.getId()), ProtobufUtils.toLocalDateTime(flight.getDepartureDate()),
+                ProtobufUtils.toLocalDateTime(flight.getArriveDate())));
 
         flightServiceBlockingStub.reserveSeat(toReserveSeatRequestDto(flight.getId(), emptySeat.getSeatNumber()));
 

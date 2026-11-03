@@ -20,13 +20,19 @@ public class AirportDocument {
   private String name;
   private String code;
   private String address;
+  private String city;
+  private String region;
+  private String country;
   private boolean isDeleted;
 
-  public AirportDocument(UUID airportId, String name, String code, String address, boolean isDeleted) {
+  public AirportDocument(UUID airportId, String name, String code, String address, String city, String region, String country, boolean isDeleted) {
     this.airportId = airportId;
     this.name = name;
     this.code = code;
     this.address = address;
+    this.city = city;
+    this.region = region;
+    this.country = country;
     this.isDeleted = isDeleted;
   }
 }

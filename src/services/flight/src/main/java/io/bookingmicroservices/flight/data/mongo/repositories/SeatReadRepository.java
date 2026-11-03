@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public interface SeatReadRepository extends MongoRepository<SeatDocument, ObjectId> {
   SeatDocument findSeatByFlightIdAndSeatNumberAndIsDeletedFalse(UUID flightId, String seatNumber);
+  SeatDocument findSeatByFlightIdAndSeatNumberAndIsDeletedTrue(UUID flightId, String seatNumber);
+  long countByFlightIdAndIsDeletedFalse(UUID flightId);
   List<SeatDocument> findAllSeatsByFlightIdAndIsDeletedFalse(UUID flightId);
 }
 

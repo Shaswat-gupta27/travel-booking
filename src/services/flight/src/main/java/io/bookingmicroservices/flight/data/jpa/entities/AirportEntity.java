@@ -1,5 +1,7 @@
 package io.bookingmicroservices.flight.data.jpa.entities;
 
+import io.bookingmicroservices.flight.airports.valueobjects.Location;
+
 import buildingblocks.core.model.BaseEntity;
 import io.bookingmicroservices.flight.airports.valueobjects.Address;
 import io.bookingmicroservices.flight.airports.valueobjects.Code;
@@ -29,12 +31,15 @@ public class AirportEntity extends BaseEntity<UUID> {
   private Code code;
   @Embedded
   private Address address;
+  @Embedded
+  private Location location;
 
-  public AirportEntity(UUID id, Name name, Code code, Address address, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModified, Long lastModifiedBy, Long version, boolean isDeleted) {
+  public AirportEntity(UUID id, Name name, Code code, Address address, Location location, LocalDateTime createdAt, Long createdBy, LocalDateTime lastModified, Long lastModifiedBy, Long version, boolean isDeleted) {
     this.id = id;
     this.name = name;
     this.code = code;
     this.address = address;
+    this.location = location;
     this.createdAt = createdAt;
     this.createdBy = createdBy;
     this.lastModified = lastModified;
@@ -43,10 +48,11 @@ public class AirportEntity extends BaseEntity<UUID> {
     this.isDeleted = isDeleted;
   }
 
-  public AirportEntity(UUID id, Name name, Code code, Address address) {
+  public AirportEntity(UUID id, Name name, Code code, Address address, Location location) {
     this.id = id;
     this.name = name;
     this.code = code;
     this.address = address;
+    this.location = location;
   }
 }

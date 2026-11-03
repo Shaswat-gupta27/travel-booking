@@ -20,5 +20,7 @@ public record CreateFlightCommand(
   BigDecimal durationMinutes,
   LocalDateTime flightDate,
   FlightStatus status,
-  BigDecimal price) implements ICommand<FlightDto>, InternalCommand {
+  BigDecimal price,
+  int numberOfSeats,
+  int seatsPerRow) implements ICommand<FlightDto>, InternalCommand {
 }

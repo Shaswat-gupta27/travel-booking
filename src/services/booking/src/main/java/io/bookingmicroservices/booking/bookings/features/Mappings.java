@@ -16,8 +16,26 @@ public final class Mappings {
     public static BookingEntity toBookingEntity(Booking booking) {
         return new BookingEntity(
                 booking.getId().getBookingId(),
+                booking.getUserId(),
                 booking.getPassengerInfo(),
                 booking.getTrip(),
+                booking.getStatus(),
+                booking.getCreatedAt(),
+                booking.getCreatedBy(),
+                booking.getLastModified(),
+                booking.getLastModifiedBy(),
+                booking.getVersion(),
+                booking.isDeleted()
+        );
+    }
+
+    public static Booking toBookingAggregate(BookingEntity booking) {
+        return new Booking(
+                new BookingId(booking.getId()),
+                booking.getUserId(),
+                booking.getPassengerInfo(),
+                booking.getTrip(),
+                booking.getStatus(),
                 booking.getCreatedAt(),
                 booking.getCreatedBy(),
                 booking.getLastModified(),
@@ -38,29 +56,54 @@ public final class Mappings {
                 booking.getTrip().getSeatNumber(),
                 booking.getTrip().getDepartureAirportId(),
                 booking.getTrip().getArriveAirportId(),
-                booking.getTrip().getDescription()
+                booking.getTrip().getDescription(),
+                booking.getTrip().getFlightId(),
+                booking.getTrip().getDepartureDate(),
+                booking.getTrip().getArriveDate(),
+                booking.getStatus()
         );
     }
 
-    public static CreateBookingCommand toCreateBookingCommand(CreateBookingRequestDto bookingRequestDto) {
+    public static BookingDto toBookingDto(BookingDocument booking) {
+        return new BookingDto(
+                booking.getBookingId(),
+                booking.getPassengerInfo().getName(),
+                booking.getTrip().getFlightNumber(),
+                booking.getTrip().getAircraftId(),
+                booking.getTrip().getPrice(),
+                booking.getTrip().getFlightDate(),
+                booking.getTrip().getSeatNumber(),
+                booking.getTrip().getDepartureAirportId(),
+                booking.getTrip().getArriveAirportId(),
+                booking.getTrip().getDescription(),
+                booking.getTrip().getFlightId(),
+                booking.getTrip().getDepartureDate(),
+                booking.getTrip().getArriveDate(),
+                booking.getStatus()
+        );
+    }
+
+    public static CreateBookingCommand toCreateBookingCommand(CreateBookingRequestDto bookingRequestDto, String userId, boolean isAdmin) {
         return new CreateBookingCommand(
                 UuidCreator.getTimeOrderedEpoch(),
                 bookingRequestDto.passengerId(),
                 bookingRequestDto.flightId(),
-                bookingRequestDto.description()
+                bookingRequestDto.description(),
+                userId,
+                isAdmin
         );
     }
 
     public static BookingDocument toBookingDocument(CreateBookingMongoCommand createBookingMongoCommand) {
         return new BookingDocument(
                 createBookingMongoCommand.id(),
+                createBookingMongoCommand.userId(),
                 createBookingMongoCommand.passengerInfo(),
                 createBookingMongoCommand.trip(),
+                createBookingMongoCommand.status(),
                 createBookingMongoCommand.isDeleted()
         );
     }
-
-
 
     public static Flight.GetByIdRequestDto toFlightGetByIdRequestDto(CreateBookingCommand createBookingCommand) {
         return Flight.GetByIdRequestDto.newBuilder()
@@ -79,6 +122,13 @@ public final class Mappings {
 
     public static Flight.ReserveSeatRequestDto toReserveSeatRequestDto(String flightId, String seatNumber) {
         return Flight.ReserveSeatRequestDto.newBuilder()
+                .setFlightId(flightId)
+                .setSeatNumber(seatNumber)
+                .build();
+    }
+
+    public static Flight.ReleaseSeatRequestDto toReleaseSeatRequestDto(String flightId, String seatNumber) {
+        return Flight.ReleaseSeatRequestDto.newBuilder()
                 .setFlightId(flightId)
                 .setSeatNumber(seatNumber)
                 .build();

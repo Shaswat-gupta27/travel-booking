@@ -15,4 +15,7 @@ import java.util.UUID;
 public interface SeatRepository extends JpaRepository<SeatEntity, UUID> {
   SeatEntity findSeatByIdAndIsDeletedFalse(UUID id);
   SeatEntity findSeatByFlightIdAndSeatNumberAndIsDeletedFalse(FlightId flightId, SeatNumber seatNumber);
+  SeatEntity findSeatByFlightIdAndSeatNumber(FlightId flightId, SeatNumber seatNumber);
+  // Includes reserved seats (isDeleted = true): a seat number exists once per flight
+  boolean existsByFlightIdAndSeatNumber(FlightId flightId, SeatNumber seatNumber);
 }

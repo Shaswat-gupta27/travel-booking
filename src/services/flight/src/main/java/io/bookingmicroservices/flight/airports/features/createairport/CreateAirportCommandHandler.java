@@ -1,5 +1,7 @@
 package io.bookingmicroservices.flight.airports.features.createairport;
 
+import io.bookingmicroservices.flight.airports.valueobjects.Location;
+
 import buildingblocks.mediator.abstractions.commands.ICommandHandler;
 import io.bookingmicroservices.flight.airports.dtos.AirportDto;
 import io.bookingmicroservices.flight.airports.exceptions.AirportAlreadyExistException;
@@ -25,7 +27,7 @@ public class CreateAirportCommandHandler implements ICommandHandler<CreateAirpor
   @Override
   public AirportDto handle(CreateAirportCommand command) {
 
-    AirportEntity existAirport = airportRepository.findAirportByCodeAndIsDeletedFalse(command.code());
+    AirportEntity existAirport = airportRepository.findAirportByCodeAndIsDeletedFalse(new Code(command.code()));
     if (existAirport != null) {
       throw new AirportAlreadyExistException();
     }
@@ -34,7 +36,8 @@ public class CreateAirportCommandHandler implements ICommandHandler<CreateAirpor
       new AirportId(command.id()),
       new Name(command.name()),
       new Code(command.code()),
-      new Address(command.address())
+      new Address(command.address()),
+      new Location(command.city(), command.region(), command.country())
     );
 
     AirportEntity airportEntity = Mappings.toAirportEntity(airport);

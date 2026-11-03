@@ -1,5 +1,8 @@
 package io.bookingmicroservices.flight;
 
+import io.bookingmicroservices.flight.seats.features.releaseseat.ReleaseSeatMongoCommand;
+import io.bookingmicroservices.flight.seats.features.releaseseat.SeatReleasedDomainEvent;
+
 import buildingblocks.contracts.flight.*;
 import buildingblocks.core.event.EventMapper;
 import buildingblocks.core.event.DomainEvent;
@@ -34,6 +37,7 @@ public class EventMapperImpl implements EventMapper {
         case AircraftCreatedDomainEvent e -> new AircraftCreated(e.id());
         case SeatCreatedDomainEvent e -> new SeatCreated(e.id());
         case SeatReservedDomainEvent e -> new SeatReserved(e.id());
+      case SeatReleasedDomainEvent e -> new SeatReleased(e.id());
         default -> null;
       };
   }
@@ -47,10 +51,11 @@ public class EventMapperImpl implements EventMapper {
         e.departureDate(), e.arriveDate(), e.arriveAirportId(), e.durationMinutes(), e.flightDate(), e.status(), e.price(), e.isDeleted());
       case FlightDeletedDomainEvent e -> new DeleteFlightMongoCommand(e.id(), e.flightNumber(), e.aircraftId(), e.departureAirportId(),
         e.departureDate(), e.arriveDate(), e.arriveAirportId(), e.durationMinutes(), e.flightDate(), e.status(), e.price(), e.isDeleted());
-      case AirportCreatedDomainEvent e -> new CreateAirportMongoCommand(e.id(), e.name(), e.code(), e.address(), e.isDeleted());
+      case AirportCreatedDomainEvent e -> new CreateAirportMongoCommand(e.id(), e.name(), e.code(), e.address(), e.city(), e.region(), e.country(), e.isDeleted());
       case AircraftCreatedDomainEvent e -> new CreateAircraftMongoCommand(e.id(), e.name(), e.model(), e.manufacturingYear(), e.isDeleted());
       case SeatCreatedDomainEvent e -> new CreateSeatMongoCommand(e.id(), e.seatNumber(), e.seatType(), e.seatClass(), e.flightId(), e.isDeleted());
       case SeatReservedDomainEvent e -> new ReserveSeatMongoCommand(e.id(), e.seatNumber(), e.seatType(), e.seatClass(), e.flightId(), e.isDeleted());
+      case SeatReleasedDomainEvent e -> new ReleaseSeatMongoCommand(e.id(), e.seatNumber(), e.seatType(), e.seatClass(), e.flightId(), e.isDeleted());
       default -> null;
     };
   }

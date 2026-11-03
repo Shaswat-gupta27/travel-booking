@@ -10,7 +10,10 @@ public record CreateAirportCommand(
   UUID id,
   String name,
   String code,
-  String address
+  String address,
+  String city,
+  String region,
+  String country
   ) implements ICommand<AirportDto>, InternalCommand {
 }
 

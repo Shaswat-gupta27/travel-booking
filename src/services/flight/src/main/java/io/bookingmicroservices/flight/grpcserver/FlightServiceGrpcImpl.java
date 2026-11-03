@@ -8,6 +8,7 @@ import io.bookingmicroservices.flight.flights.features.getflightbyid.GetFlightBy
 import io.bookingmicroservices.flight.seats.dtos.SeatDto;
 import io.bookingmicroservices.flight.seats.features.Mappings;
 import io.bookingmicroservices.flight.seats.features.getavailableseats.GetAvailableSeatsQuery;
+import io.bookingmicroservices.flight.seats.features.releaseseat.ReleaseSeatCommand;
 import io.bookingmicroservices.flight.seats.features.reserveseat.ReserveSeatCommand;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -48,6 +49,16 @@ public class FlightServiceGrpcImpl extends FlightServiceGrpc.FlightServiceImplBa
   public void reserveSeat(Flight.ReserveSeatRequestDto request, StreamObserver<Flight.SeatResponseDto> responseObserver) {
 
     SeatDto result = mediator.send(new ReserveSeatCommand(request.getSeatNumber(), UUID.fromString(request.getFlightId())));
+    Flight.SeatResponseDto seatResponseDtoGrpc = toSeatResponseDtoGrpc(result);
+
+    responseObserver.onNext(seatResponseDtoGrpc);
+    responseObserver.onCompleted();
+  }
+
+  @Override
+  public void releaseSeat(Flight.ReleaseSeatRequestDto request, StreamObserver<Flight.SeatResponseDto> responseObserver) {
+
+    SeatDto result = mediator.send(new ReleaseSeatCommand(request.getSeatNumber(), UUID.fromString(request.getFlightId())));
     Flight.SeatResponseDto seatResponseDtoGrpc = toSeatResponseDtoGrpc(result);
 
     responseObserver.onNext(seatResponseDtoGrpc);
