@@ -23,7 +23,7 @@
 - [Technologies](#technologies)
 - [Recent changes](#recent-changes)
 - [Known limitations](#known-limitations)
-- [Contribution, license and credits](#contribution-license-and-credits)
+- [Contribution and credits](#contribution-and-credits)
 
 ## What you can do with it
 
@@ -266,9 +266,9 @@ This version turned the sample into a backend a travel website can use. Summary 
 - RabbitMQ events are published but not consumed (the passenger service's `FlightUpdatedListener` listens on a different exchange and only logs).
 - Domain events are kept in a static list shared by all requests, so two commands running at the same moment could mix events.
 
-## Contribution, license and credits
+## Contribution and credits
 
-Contributions are welcome: please follow the [contribution guideline](./CONTRIBUTION.md). Licensed under the terms in [LICENSE](./LICENSE).
+Contributions are welcome: please follow the [contribution guideline](./CONTRIBUTION.md).
 
 Project references and credits (from the original sample):
 
