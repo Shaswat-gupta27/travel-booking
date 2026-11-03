@@ -1,5 +1,7 @@
 package io.bookingmicroservices.flight.seats.models;
 
+import io.bookingmicroservices.flight.seats.features.releaseseat.SeatReleasedDomainEvent;
+
 import buildingblocks.core.model.AggregateRoot;
 import io.bookingmicroservices.flight.seats.enums.SeatClass;
 import io.bookingmicroservices.flight.seats.enums.SeatType;
@@ -66,6 +68,18 @@ public class Seat extends AggregateRoot<SeatId> {
     ));
 
     return seat;
+  }
+
+  public void releaseSeat() {
+    this.isDeleted = false;
+    this.addDomainEvent(new SeatReleasedDomainEvent(
+      this.getId().getSeatId(),
+      this.getSeatNumber().getSeatNumber(),
+      this.getSeatType(),
+      this.getSeatClass(),
+      this.getFlightId().getFlightId(),
+      false
+    ));
   }
 
   public void reserveSeat() {

@@ -24,6 +24,9 @@ public class Trip {
     private BigDecimal price;
     private String description;
     private String seatNumber;
+    private UUID flightId;
+    private LocalDateTime departureDate;
+    private LocalDateTime arriveDate;
 
     public Trip(
             String flightNumber,
@@ -33,7 +36,10 @@ public class Trip {
             LocalDateTime flightDate,
             BigDecimal price,
             String description,
-            String seatNumber) {
+            String seatNumber,
+            UUID flightId,
+            LocalDateTime departureDate,
+            LocalDateTime arriveDate) {
 
         ValidationUtils.notBeNullOrEmpty(flightNumber);
         ValidationUtils.notBeNullOrEmpty(aircraftId);
@@ -43,6 +49,9 @@ public class Trip {
         ValidationUtils.notBeNegativeOrNull(price);
         ValidationUtils.notBeNullOrEmpty(description);
         ValidationUtils.notBeNullOrEmpty(seatNumber);
+        ValidationUtils.notBeNullOrEmpty(flightId);
+        ValidationUtils.validLocalDateTime(departureDate);
+        ValidationUtils.validLocalDateTime(arriveDate);
 
         this.flightNumber = flightNumber;
         this.aircraftId = aircraftId;
@@ -52,6 +61,9 @@ public class Trip {
         this.price = price;
         this.description = description;
         this.seatNumber = seatNumber;
+        this.flightId = flightId;
+        this.departureDate = departureDate;
+        this.arriveDate = arriveDate;
     }
 }
 

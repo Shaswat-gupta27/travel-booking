@@ -88,7 +88,7 @@ authorization: bearer {{Authenticate.response.body.access_token}}
 
 ###
 # @name Get_Available_Flights
-GET {{api-gateway}}/api/v1/flight/get-available-flights
+GET {{api-gateway}}/api/v1/flight
 accept: application/json
 Content-Type: application/json
 authorization: bearer {{Authenticate.response.body.access_token}}
@@ -112,7 +112,9 @@ authorization: bearer {{Authenticate.response.body.access_token}}
   "durationMinutes": 120,
   "flightDate": "2022-03-01T14:55:41.255Z",
   "status": "Delay",
-  "price": 8000
+  "price": 8000,
+  "numberOfSeats": 180,
+  "seatsPerRow": 6
 }
 ###
 
@@ -159,8 +161,44 @@ authorization: bearer {{Authenticate.response.body.access_token}}
 {
   "name": "mehrabad",
   "address": "tehran",
-  "code": "12YD"
+  "code": "12YD",
+  "city": "Tehran",
+  "region": "Tehran",
+  "country": "Iran"
 }
+###
+
+###
+# @name Search_Flights
+# from/to match airport name, code, city, region or country (partial text, ignoring case).
+# optional: date=yyyy-MM-dd (departure day), sort=departure|price|duration, page (from 1), size (max 100)
+GET {{api-gateway}}/api/v1/flight/search?from=Delhi&to=California&sort=price&page=1&size=20
+accept: application/json
+###
+
+###
+# @name Get_Airports
+# optional filters: ?q=california (name, code, city, region or country) and ?city=Los Angeles
+GET {{api-gateway}}/api/v1/flight/airport
+accept: application/json
+###
+
+###
+# @name Get_Airport_By_Id
+GET {{api-gateway}}/api/v1/flight/airport/3c5c0000-97c6-fc34-a0cb-08db322230c8
+accept: application/json
+###
+
+###
+# @name Get_Aircrafts
+GET {{api-gateway}}/api/v1/flight/aircraft
+accept: application/json
+###
+
+###
+# @name Get_Aircraft_By_Id
+GET {{api-gateway}}/api/v1/flight/aircraft/3c5c0000-97c6-fc34-fcd3-08db322230c8
+accept: application/json
 ###
 
 
@@ -205,11 +243,36 @@ authorization: bearer {{Authenticate.response.body.access_token}}
 
 
 ###
+# @name Get_My_Passengers
+# the caller's saved travellers
+GET  {{api-gateway}}/api/v1/passenger
+accept: application/json
+authorization: bearer {{Authenticate.response.body.access_token}}
+###
+
+###
 # @name Get_Passenger_By_Id
+# owner or admin only, otherwise 404 (the seeded passenger below has no owner, so only an admin can read it)
 GET  {{api-gateway}}/api/v1/passenger/4c5c0000-97c6-fc34-a0cb-08db322230c0
 accept: application/json
 Content-Type: application/json
 authorization: bearer {{Authenticate.response.body.access_token}}
+###
+
+###
+# @name Update_Passenger
+# owner or admin; the passport number stays unique per owner
+PUT  {{api-gateway}}/api/v1/passenger/{{Register_Passenger.response.body.id}}
+accept: application/json
+Content-Type: application/json
+authorization: bearer {{Authenticate.response.body.access_token}}
+
+{
+  "name": "test-passenger",
+  "passportNumber": "412900000000",
+  "passengerType": "Female",
+  "age": 31
+}
 ###
 
 
@@ -233,4 +296,28 @@ authorization: bearer {{Authenticate.response.body.access_token}}
   "flightId": {{flightId}},
   "description": "I want to fly to iran"
 }
+###
+
+###
+# @name Get_My_Bookings
+# only the caller's bookings (needs a USER or ADMIN token; the service-account token has its own id)
+GET {{api-gateway}}/api/v1/booking
+accept: application/json
+authorization: bearer {{Authenticate.response.body.access_token}}
+###
+
+###
+# @name Get_Booking_By_Id
+# owner or admin only, otherwise 404
+GET {{api-gateway}}/api/v1/booking/{{Create_Booking.response.body.id}}
+accept: application/json
+authorization: bearer {{Authenticate.response.body.access_token}}
+###
+
+###
+# @name Cancel_Booking
+# owner or admin; marks the booking Cancelled and frees the seat
+DELETE {{api-gateway}}/api/v1/booking/{{Create_Booking.response.body.id}}
+accept: application/json
+authorization: bearer {{Authenticate.response.body.access_token}}
 ###

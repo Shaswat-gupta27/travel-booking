@@ -17,6 +17,7 @@ public final class Mappings {
       airport.getName(),
       airport.getCode(),
       airport.getAddress(),
+      airport.getLocation(),
       airport.getCreatedAt(),
       airport.getCreatedBy(),
       airport.getLastModified(),
@@ -32,7 +33,21 @@ public final class Mappings {
       airportEntity.getId(),
       airportEntity.getName().getName(),
       airportEntity.getCode().getCode(),
-      airportEntity.getAddress().getAddress());
+      airportEntity.getAddress().getAddress(),
+      airportEntity.getLocation().getCity(),
+      airportEntity.getLocation().getRegion(),
+      airportEntity.getLocation().getCountry());
+  }
+
+  public static AirportDto toAirportDto(AirportDocument airportDocument) {
+    return new AirportDto(
+      airportDocument.getAirportId(),
+      airportDocument.getName(),
+      airportDocument.getCode(),
+      airportDocument.getAddress(),
+      airportDocument.getCity(),
+      airportDocument.getRegion(),
+      airportDocument.getCountry());
   }
 
   public static CreateAirportCommand toCreateAirportCommand(CreateAirportRequestDto createAirportRequestDto) {
@@ -40,7 +55,10 @@ public final class Mappings {
       UuidCreator.getTimeOrderedEpoch(),
       createAirportRequestDto.name(),
       createAirportRequestDto.code(),
-      createAirportRequestDto.address()
+      createAirportRequestDto.address(),
+      createAirportRequestDto.city(),
+      createAirportRequestDto.region(),
+      createAirportRequestDto.country()
     );
   }
 
@@ -50,6 +68,9 @@ public final class Mappings {
       createAirportMongoCommand.name(),
       createAirportMongoCommand.code(),
       createAirportMongoCommand.address(),
+      createAirportMongoCommand.city(),
+      createAirportMongoCommand.region(),
+      createAirportMongoCommand.country(),
       createAirportMongoCommand.isDeleted()
     );
   }
@@ -60,6 +81,9 @@ public final class Mappings {
       airportEntity.getName().getName(),
       airportEntity.getCode().getCode(),
       airportEntity.getAddress().getAddress(),
+      airportEntity.getLocation().getCity(),
+      airportEntity.getLocation().getRegion(),
+      airportEntity.getLocation().getCountry(),
       airportEntity.isDeleted()
     );
   }

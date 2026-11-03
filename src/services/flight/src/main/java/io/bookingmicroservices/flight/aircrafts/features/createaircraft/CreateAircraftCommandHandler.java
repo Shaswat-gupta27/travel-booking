@@ -25,7 +25,7 @@ public class CreateAircraftCommandHandler implements ICommandHandler<CreateAircr
   @Override
   public AircraftDto handle(CreateAircraftCommand command) {
 
-    AircraftEntity existAircraft = aircraftRepository.findAircraftByModelAndIsDeletedFalse(command.model());
+    AircraftEntity existAircraft = aircraftRepository.findAircraftByModelAndIsDeletedFalse(new Model(command.model()));
     if (existAircraft != null) {
       throw new AircraftAlreadyExistException();
     }

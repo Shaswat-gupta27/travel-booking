@@ -8,6 +8,9 @@ public record AirportCreatedDomainEvent(
   String name,
   String code,
   String address,
+  String city,
+  String region,
+  String country,
   boolean isDeleted) implements DomainEvent {
 }
 

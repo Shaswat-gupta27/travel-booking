@@ -10,16 +10,25 @@ import io.bookingmicroservices.flight.flights.exceptions.FlightAlreadyExistExcep
 import io.bookingmicroservices.flight.flights.features.Mappings;
 import io.bookingmicroservices.flight.flights.models.Flight;
 import io.bookingmicroservices.flight.flights.valueobjects.*;
+import io.bookingmicroservices.flight.data.jpa.entities.SeatEntity;
+import io.bookingmicroservices.flight.data.jpa.repositories.SeatRepository;
+import io.bookingmicroservices.flight.seats.models.SeatLayout;
 import org.springframework.stereotype.Service;
+import java.util.List;
+
+import static io.bookingmicroservices.flight.seats.features.Mappings.toSeatEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CreateFlightCommandHandler implements ICommandHandler<CreateFlightCommand, FlightDto> {
   private final FlightRepository flightRepository;
+  private final SeatRepository seatRepository;
 
   public CreateFlightCommandHandler(
-    FlightRepository flightRepository) {
+    FlightRepository flightRepository,
+    SeatRepository seatRepository) {
     this.flightRepository = flightRepository;
+    this.seatRepository = seatRepository;
   }
 
   @Override
@@ -47,6 +56,13 @@ public class CreateFlightCommandHandler implements ICommandHandler<CreateFlightC
     FlightEntity flightEntity = Mappings.toFlightEntity(flight);
 
     FlightEntity flightCreated = flightRepository.save(flightEntity);
+
+    // Every flight gets its seats, unreserved, in the same transaction so it can be booked right away.
+    List<SeatEntity> seats = SeatLayout.createSeats(command.id(), command.numberOfSeats(), command.seatsPerRow()).stream()
+      .map(seat -> toSeatEntity(seat))
+      .toList();
+    seatRepository.saveAll(seats);
+
     return Mappings.toFlightDto(flightCreated);
   }
 }

@@ -35,6 +35,14 @@ public final class Mappings {
       aircraftEntity.getManufacturingYear().getManufacturingYear());
   }
 
+  public static AircraftDto toAircraftDto(AircraftDocument aircraftDocument) {
+    return new AircraftDto(
+      aircraftDocument.getAircraftId(),
+      aircraftDocument.getName(),
+      aircraftDocument.getModel(),
+      aircraftDocument.getManufacturingYear());
+  }
+
   public static CreateAircraftCommand toCreateAircraftCommand(CreateAircraftRequestDto createAircraftRequestDto) {
     return new CreateAircraftCommand(
       UuidCreator.getTimeOrderedEpoch(),

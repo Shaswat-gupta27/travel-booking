@@ -28,7 +28,7 @@ public class CreateAircraftCommandValidator implements Validator {
       errors.rejectValue("model", "model.required", "Model is required");
     }
 
-    if (command.manufacturingYear() >= 1900) {
+    if (command.manufacturingYear() < 1900) {
       errors.rejectValue("manufacturingYear", "manufacturingYear.validate", "Manufacturing Year is not valid.");
     }
   }

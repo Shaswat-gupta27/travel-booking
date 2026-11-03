@@ -1,5 +1,7 @@
 package io.bookingmicroservices.flight.flights.features.createflight;
 
+import io.bookingmicroservices.flight.seats.models.SeatLayout;
+
 import io.bookingmicroservices.flight.flights.enums.FlightStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -66,6 +68,17 @@ public class CreateFlightCommandValidator implements Validator {
     if (command.durationMinutes() == null || command.durationMinutes().compareTo(BigDecimal.ZERO) <= 0) {
       errors.rejectValue("durationMinutes", "durationMinutes.invalid",
         "Duration must be greater than 0");
+    }
+
+    // Validate seats
+    if (command.numberOfSeats() < 1 || command.numberOfSeats() > SeatLayout.MAX_SEATS) {
+      errors.rejectValue("numberOfSeats", "numberOfSeats.invalid",
+        "Number of seats must be between 1 and " + SeatLayout.MAX_SEATS);
+    }
+
+    if (command.seatsPerRow() < 1 || command.seatsPerRow() > SeatLayout.MAX_SEATS_PER_ROW) {
+      errors.rejectValue("seatsPerRow", "seatsPerRow.invalid",
+        "Seats per row must be between 1 and " + SeatLayout.MAX_SEATS_PER_ROW);
     }
 
     // Validate status

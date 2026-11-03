@@ -31,5 +31,13 @@ public class CreateAirportCommandValidator implements Validator {
     if (command.address() == null) {
       errors.rejectValue("address", "address.required", "Address is required");
     }
+
+    if (command.city() == null || command.city().trim().isEmpty()) {
+      errors.rejectValue("city", "city.required", "City is required");
+    }
+
+    if (command.country() == null || command.country().trim().isEmpty()) {
+      errors.rejectValue("country", "country.required", "Country is required");
+    }
   }
 }

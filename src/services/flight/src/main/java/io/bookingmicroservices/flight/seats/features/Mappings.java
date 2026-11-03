@@ -122,6 +122,18 @@ public final class Mappings {
   }
 
 
+  public static SeatDocument toReleaseSeatDocument(SeatDocument seatDocument) {
+    return new SeatDocument(
+      seatDocument.getId(),
+      seatDocument.getSeatId(),
+      seatDocument.getSeatNumber(),
+      seatDocument.getType(),
+      seatDocument.getSeatClass(),
+      seatDocument.getFlightId(),
+      false
+    );
+  }
+
   public static SeatDocument toSeatDocument(SeatEntity seatEntity) {
     return new SeatDocument(
       seatEntity.getId(),

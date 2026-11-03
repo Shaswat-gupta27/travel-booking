@@ -1,4 +1,7 @@
 package io.bookingmicroservices.booking.bookings.dtos;
+
+import io.bookingmicroservices.booking.bookings.enums.BookingStatus;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,5 +16,9 @@ public record BookingDto(
         String seatNumber,
         UUID departureAirportId,
         UUID arriveAirportId,
-        String description
+        String description,
+        UUID flightId,
+        LocalDateTime departureDate,
+        LocalDateTime arriveDate,
+        BookingStatus status
 ) { }

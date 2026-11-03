@@ -43,6 +43,12 @@ public class RabbitmqConfiguration {
     this.logger = logger;
   }
 
+  // RabbitAdmin declares Exchange beans on startup, so services that only publish (no listeners) get their exchange too.
+  @Bean
+  public Exchange integrationEventsExchange() {
+    return buildExchange();
+  }
+
   @Bean
   public ConnectionFactory connectionFactory() {
     CachingConnectionFactory connectionFactory = new CachingConnectionFactory(rabbitProperties.getHost());
@@ -142,7 +148,15 @@ public class RabbitmqConfiguration {
   }
 
   private Exchange declareExchange(RabbitAdmin rabbitAdmin) {
-    Exchange exchange = switch (exchangeType.toLowerCase()) {
+    Exchange exchange = buildExchange();
+
+    rabbitAdmin.declareExchange(exchange);
+
+    return exchange;
+  }
+
+  private Exchange buildExchange() {
+    return switch (exchangeType.toLowerCase()) {
       case "direct" ->
         new DirectExchange(rabbitProperties.getTemplate().getExchange());
       case "fanout" ->
@@ -150,10 +164,6 @@ public class RabbitmqConfiguration {
       default ->
         new TopicExchange(rabbitProperties.getTemplate().getExchange());
     };
-
-    rabbitAdmin.declareExchange(exchange);
-
-    return exchange;
   }
 
   private static Queue declareQueue(RabbitAdmin rabbitAdmin, String typeName) {

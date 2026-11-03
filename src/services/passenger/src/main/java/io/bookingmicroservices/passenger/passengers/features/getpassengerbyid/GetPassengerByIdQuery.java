@@ -6,7 +6,9 @@ import io.bookingmicroservices.passenger.passengers.dtos.PassengerDto;
 import java.util.UUID;
 
 public record GetPassengerByIdQuery(
-        UUID id
+        UUID id,
+        String userId,
+        boolean isAdmin
 ) implements IQuery<PassengerDto> {
 }
 

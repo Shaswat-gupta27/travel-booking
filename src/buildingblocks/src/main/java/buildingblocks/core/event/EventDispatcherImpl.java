@@ -22,6 +22,7 @@ import java.util.Set;
 @Import(PersistMessageProcessorConfiguration.class)
 public class EventDispatcherImpl implements EventDispatcher {
     private final EventMapper eventMapper;
+    private volatile AggregateRoot<?> aggregateRoot;
     private final PersistMessageProcessor persistMessageProcessor;
   private final ApplicationContext applicationContext;
 
@@ -45,13 +46,22 @@ public class EventDispatcherImpl implements EventDispatcher {
 
     @Override
     public List<DomainEvent> getDomainEvents() {
-            AggregateRoot<?> aggregateRoot = ReflectionUtils.getInstanceOfSubclass(AggregateRoot.class, applicationContext);
-            return Objects.requireNonNull(aggregateRoot).getDomainEvents();
+        return aggregateRoot().getDomainEvents();
     }
 
     @Override
     public void clearDomainEvents() {
-        AggregateRoot<?> aggregateRoot = ReflectionUtils.getInstanceOfSubclass(AggregateRoot.class, applicationContext);
-         Objects.requireNonNull(aggregateRoot).clearDomainEvents();
+        aggregateRoot().clearDomainEvents();
+    }
+
+    // Domain events live in a static list on AggregateRoot, so any instance will do. Finding one scans the whole
+    // classpath (about 0.8 s), so it is done once, not on every request and every event.
+    private AggregateRoot<?> aggregateRoot() {
+        AggregateRoot<?> instance = aggregateRoot;
+        if (instance == null) {
+            instance = Objects.requireNonNull(ReflectionUtils.getInstanceOfSubclass(AggregateRoot.class, applicationContext));
+            aggregateRoot = instance;
+        }
+        return instance;
     }
 }

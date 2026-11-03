@@ -4,7 +4,6 @@ import buildingblocks.mediator.abstractions.IMediator;
 import io.bookingmicroservices.flight.flights.dtos.FlightDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +21,6 @@ public class GetAvailableFlightsController {
   }
 
   @GetMapping()
-  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<List<FlightDto>> getAvailableFlights() {
     List<FlightDto> result = this.mediator.send(new GetAvailableFlightsQuery());
     return ResponseEntity.ok().body(result);

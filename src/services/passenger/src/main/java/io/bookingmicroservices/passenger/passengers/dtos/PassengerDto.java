@@ -8,5 +8,6 @@ public record PassengerDto(
         String name,
         String passportNumber,
         PassengerType passengerType,
-        int age
+        int age,
+        String userId
 ) { }

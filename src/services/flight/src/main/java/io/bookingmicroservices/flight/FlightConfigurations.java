@@ -1,5 +1,9 @@
 package io.bookingmicroservices.flight;
 
+import java.time.Clock;
+
+import org.springframework.context.annotation.Bean;
+
 import buildingblocks.core.event.EventDispatcherConfiguration;
 import buildingblocks.jpa.JpaConfiguration;
 import buildingblocks.keycloak.KeycloakConfiguration;
@@ -35,6 +39,11 @@ import org.springframework.context.annotation.Import;
   MediatorConfiguration.class
 })
 public class FlightConfigurations {
+
+  @Bean
+  public Clock clock() {
+    return Clock.systemDefaultZone();
+  }
 }
 
 

@@ -4,5 +4,10 @@ spring:
   application:
     name: api.gateway
 
+app:
+  security:
+    # GET requests that need no login; keep in sync with the flight service
+    public-get-paths: "/api/*/flight,/api/*/flight/{id:[0-9a-fA-F-]{36}},/api/*/flight/get-available-seats/*,/api/*/flight/search,/api/*/flight/airport,/api/*/flight/airport/{id:[0-9a-fA-F-]{36}},/api/*/flight/aircraft,/api/*/flight/aircraft/{id:[0-9a-fA-F-]{36}}"
+
 server:
   port: 8081

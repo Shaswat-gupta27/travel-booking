@@ -52,3 +52,8 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://localhost:8080/realms/keycloak-realm/protocol/openid-connect/certs
+
+app:
+  security:
+    # GET requests that need no login; keep in sync with the gateway
+    public-get-paths: "/api/*/flight,/api/*/flight/{id:[0-9a-fA-F-]{36}},/api/*/flight/get-available-seats/*,/api/*/flight/search,/api/*/flight/airport,/api/*/flight/airport/{id:[0-9a-fA-F-]{36}},/api/*/flight/aircraft,/api/*/flight/aircraft/{id:[0-9a-fA-F-]{36}}"

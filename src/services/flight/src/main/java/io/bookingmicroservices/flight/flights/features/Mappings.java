@@ -1,5 +1,7 @@
 package io.bookingmicroservices.flight.flights.features;
 
+import io.bookingmicroservices.flight.seats.models.SeatLayout;
+
 import buildingblocks.utils.protobuf.ProtobufUtils;
 import com.github.f4b6a3.uuid.UuidCreator;
 import io.bookingmicroservices.flight.aircrafts.valueobjects.AircraftId;
@@ -95,7 +97,9 @@ public final class Mappings {
       createFlightRequestDto.durationMinutes(),
       createFlightRequestDto.flightDate(),
       createFlightRequestDto.status(),
-      createFlightRequestDto.price()
+      createFlightRequestDto.price(),
+      createFlightRequestDto.numberOfSeats() == null ? 0 : createFlightRequestDto.numberOfSeats(),
+      createFlightRequestDto.seatsPerRow() == null ? SeatLayout.DEFAULT_SEATS_PER_ROW : createFlightRequestDto.seatsPerRow()
     );
   }
 

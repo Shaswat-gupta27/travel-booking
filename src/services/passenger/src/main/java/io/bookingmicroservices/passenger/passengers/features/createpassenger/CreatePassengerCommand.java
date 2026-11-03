@@ -13,7 +13,8 @@ public record CreatePassengerCommand(
         String name,
         String passportNumber,
         PassengerType passengerType,
-        int age
+        int age,
+        String userId
 ) implements ICommand<PassengerDto>, InternalCommand {
     public CreatePassengerCommand {
     }

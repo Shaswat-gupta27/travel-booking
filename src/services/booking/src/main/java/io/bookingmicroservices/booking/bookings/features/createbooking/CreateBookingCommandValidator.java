@@ -24,6 +24,10 @@ public class CreateBookingCommandValidator implements Validator {
         if (command.passengerId() == null) {
             errors.rejectValue("passengerId", "passengerId.required", "Passenger ID is required");
         }
+
+        if (command.userId() == null || command.userId().isBlank()) {
+            errors.rejectValue("userId", "userId.required", "User ID is required");
+        }
     }
 }
 

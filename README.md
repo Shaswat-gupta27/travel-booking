@@ -2,186 +2,275 @@
   <img src="assets/logo.png" alt="booking-microservices-java-spring-boot" />
 </div>
 
-> 🚀 **A practical and imaginary microservices for implementing an infrastructure for up and running distributed system with the latest technology and architecture like Vertical Slice Architecture, Event Driven Architecture, CQRS, DDD, gRpc, MongoDB, RabbitMq in Java Spring Boot.**
+> A flight-booking backend built as Java Spring Boot microservices: Vertical Slice Architecture, CQRS with a mediator pipeline, DDD aggregates, an outbox for events, gRPC between services, PostgreSQL for writes, MongoDB for reads, RabbitMQ, Keycloak (OIDC) and a Spring Cloud Gateway. Designed to sit behind a travel-booking website.
 
 # Table of Contents
 
-- [The Goals of This Project](#the-goals-of-this-project)
-- [Plan](#plan)
-- [Technologies - Libraries](#technologies---libraries)
-- [The Domain and Bounded Context - Service Boundary](#the-domain-and-bounded-context---service-boundary)
-- [Structure of Project](#structure-of-project)
-- [How to Run](#how-to-run)
-  - [Docker Compose](#docker-compose)
-  - [Build](#build)
-  - [Run](#run)
-  - [Test](#test)
-- [Documentation Apis](#documentation-apis)
-- [Support](#support)
-- [Contribution](#contribution)
+- [What you can do with it](#what-you-can-do-with-it)
+- [Architecture](#architecture)
+  - [Services and ports](#services-and-ports)
+  - [Write side and read side](#write-side-and-read-side)
+  - [How the services communicate](#how-the-services-communicate)
+  - [Data model](#data-model)
+  - [Authentication and authorization](#authentication-and-authorization)
+  - [Key flows](#key-flows)
+  - [Inside a service](#inside-a-service)
+- [API summary](#api-summary)
+- [How to run](#how-to-run)
+- [Configuration](#configuration)
+- [Testing](#testing)
+- [Project structure](#project-structure)
+- [Technologies](#technologies)
+- [Recent changes](#recent-changes)
+- [Known limitations](#known-limitations)
+- [Contribution, license and credits](#contribution-license-and-credits)
 
-## The Goals of This Project
+## What you can do with it
 
-- :sparkle: Using `Vertical Slice Architecture` for `architecture` level.
-- :sparkle: Using `Spring MVC` as a `Web Framework`.
-- :sparkle: Using `Domain Driven Design (DDD)` to implement all `business processes` in microservices.
-- :sparkle: Using `Spring AMQP` on top of `Rabbitmq` for `Event Driven Architecture` between our microservices.
-- :sparkle: Using `gRPC` for `internal communication` between our microservices.
-- :sparkle: Using `CQRS` implementation with `Mediator` library.
-- :sparkle: Using `Spring Data JPA` for `data persistence` and `ORM` in `write side` with `Postgres`.
-- :sparkle: Using `Spring Data MongoDB` for `data persistence` and `ORM` in `read side` with `MongoDB`.
-- :sparkle: Using `Inbox Pattern` for ensuring message idempotency for receiver and `Exactly once Delivery`.
-- :sparkle: Using `Outbox Pattern` for ensuring no message is lost and there is at `At Least One Delivery`.
-- :sparkle: Using `Unit Testing` for testing small units and mocking our dependencies with `Mockito`.
-- :sparkle: Using `End-To-End Testing` and `Integration Testing` for testing `features` with all dependencies using `testcontainers`.
-- :sparkle: Using `Spring Validator` and a `Validation Pipeline Behaviour` on top of `Mediator`.
-- :sparkle: Using `Springdoc Openapi` for generating `OpenAPI documentation` in Spring Boot.
-- :sparkle: Using `OpenTelemetry Collector` for collecting `Metrics`, `Tracings` and `Structured Logs`.
-- :sparkle: Using `Kibana` for `Logging` top of `OpenTelemetry Collector`.
-- :sparkle: Using `Jaeger` for `Distributed Tracing` top of `OpenTelemetry Collector`.
-- :sparkle: Using `Prometheus` and `Grafana` for `monitoring` top of `OpenTelemetry Collector`.
-- :sparkle: Using `Keycloak` for `authentication` and `authorization` base on `OpenID-Connect` and `OAuth2`.
-- :sparkle: Using `Spring Cloud Gateway` as a microservices `gateway`.
+- **Browse without an account:** search flights from one city to another (`Delhi` to `California` finds every airport of each), list airports and aircraft, see free seats.
+- **Sign up and log in** (Keycloak): save travellers (passengers), book a flight for one of them, list your bookings, cancel a booking (the seat is freed).
+- **Administer (role `ADMIN`):** create airports, aircraft and flights; creating a flight also creates its seats.
 
+## Architecture
 
-## Plan
-
-> 🌀This project is a work in progress, new features will be added over time.🌀
-
-Future goals and additions will be tracked over time.
-
-High-level plan is represented in the table
-
-| Feature           | Status         |
-|-------------------| -------------- |
-| API Gateway       | Completed ✔️   |
-| Keycloak Service  | Completed ✔️   |
-| Flight Service    | Completed ✔️   |
-| Passenger Service | Completed ✔️   |
-| Booking Service   | Completed ✔️   |
-| Building Blocks   | Completed ✔️   |
-
-
-## Technologies - Libraries
-- ✔️ **[Spring Boot](https://github.com/spring-projects/spring-boot/tree/main)** - Framework for building Java applications with pre-configured defaults and embedded server support.
-- ✔️ **[Spring AMQP](https://github.com/spring-projects/spring-amqp)** - Simplifies messaging using RabbitMQ with declarative configuration and templates.
-- ✔️ **[Spring Data JPA](https://github.com/spring-projects/spring-data-jpa)** - Enhances JPA with repository abstractions and advanced query capabilities.
-- ✔️ **[Spring Data MongoDB](https://github.com/spring-projects/spring-data-mongodb)** - Provides seamless MongoDB integration with Spring-based applications.
-- ✔️ **[Spring Security](https://github.com/spring-projects/spring-security)** - Comprehensive security framework for authentication and authorization in Java applications.
-- ✔️ **[Keycloak](https://github.com/keycloak/keycloak)** - A identity and access management solution supporting OpenID Connect and OAuth 2.0.
-- ✔️ **[PostgreSQL](https://github.com/pgjdbc/pgjdbc)** - Official JDBC driver for PostgreSQL, enabling Java applications to interact with PostgreSQL databases.
-- ✔️ **[Springdoc OpenAPI](https://github.com/springdoc/springdoc-openapi)** - Automatically generates OpenAPI 3 documentation for Spring Boot projects.
-- ✔️ **[Swagger Core](https://github.com/swagger-api/swagger-core)** - Core library for building and consuming Swagger-compliant APIs.
-- ✔️ **[OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector/tree/main)** - Collects, processes, and exports telemetry data (traces, metrics, logs) for observability.
-- ✔️ **[Lombok](https://github.com/projectlombok/lombok)** - Reduces boilerplate code in Java by generating common methods like getters and setters.
-- ✔️ **[Flyway](https://github.com/flyway/flyway)** - Database migration tool for version-controlled and repeatable schema changes.
-- ✔️ **[JPA Buddy](https://jpa-buddy.com)** - Productivity tool for working with JPA and Hibernate, simplifying development and debugging.
-- ✔️ **[UUID Creator](https://github.com/f4b6a3/uuid-creator)** - Library for generating UUIDs in various formats and versions.
-- ✔️ **[QueryDSL](https://github.com/querydsl/querydsl)** - Enables type-safe queries for JPA, SQL, and other persistence layers.
-- ✔️ **[Reflections](https://github.com/ronmamo/reflections)** - Facilitates metadata scanning and classpath resource analysis in Java.
-- ✔️ **[gRPC Spring](https://github.com/grpc-ecosystem/grpc-spring)** - Integration of gRPC with Spring Boot for building high-performance RPC services.
-- ✔️ **[Testcontainers](https://github.com/testcontainers/testcontainers-java)** - Provides lightweight, disposable Docker containers for testing purposes.
-- ✔️ **[Mockito](https://github.com/mockito/mockito)** - Popular mocking framework for writing clean, maintainable unit tests in Java.
-- ✔️ **[JUnit](https://github.com/junit-team)** - Essential testing framework for Java developers, supporting unit and integration testing.
-
-
-## The Domain And Bounded Context - Service Boundary
-
-- `Keycloak Service`: The Keycloak Service is a identity provider for the authentication and authorization of users using [Keycloak](https://github.com/keycloak/keycloak). This service is responsible for creating new users and their corresponding roles permissions and handeling authentication and authorization with OpenID-Connect and OAuth2.
-
-- `Flight Service`: The Flight Service is a bounded context `CRUD` service to handle flight related operations.
-
-- `Passenger Service`: The Passenger Service is a bounded context for managing passenger information, tracking activities and subscribing to get notification for out of stock products.
-
-- `Booking Service`: The Booking Service is a bounded context for managing all operation related to booking ticket.
-
-![](./assets/booking-microservices-java-spring-boot.png)
-
-## Structure of Project
-
-In this project I used a mix of [clean architecture](https://jasontaylor.dev/clean-architecture-getting-started/), [vertical slice architecture](https://jimmybogard.com/vertical-slice-architecture/) and I used [feature folder structure](http://www.kamilgrzybek.com/design/feature-folders/) to structure my files.
-
-I used [yarp reverse proxy](https://microsoft.github.io/reverse-proxy/articles/index.html) to route synchronous and asynchronous requests to the corresponding microservice. Each microservice has its dependencies such as databases, files etc. Each microservice is decoupled from other microservices and developed and deployed separately. Microservices talk to each other with Rest or gRPC for synchronous calls and use RabbitMq or Kafka for asynchronous calls.
-
-We have a separate microservice [Keycloak Service](https://github.com/keycloak/keycloak) for authentication and authorization of each request. Once signed-in users are issued a JWT token. This token is used by other microservices to validate the user, read claims and allow access to authorized/role specific endpoints.
-
-I used [RabbitMQ](https://github.com/rabbitmq) as my MessageBroker for async communication between microservices using the eventual consistency mechanism. Each microservice uses [MassTransit](https://github.com/MassTransit/MassTransit) to interface with [RabbitMQ](https://github.com/rabbitmq) providing, messaging, availability, reliability, etc.
-
-Microservices are `event based` which means they can publish and/or subscribe to any events occurring in the setup. By using this approach for communicating between services, each microservice does not need to know about the other services or handle errors occurred in other microservices.
-
-After saving data in write side, I save a [Internal Command](https://github.com/kgrzybek/modular-monolith-with-ddd#38-internal-processing) record in my Persist Messages storage (like something we do in outbox pattern) and after committing transaction in write side, trigger our command handler in read side  and this handler could save their read models in our MongoDB database.
-
-I treat each request as a distinct use case or slice, encapsulating and grouping all concerns from front-end to back.
-When adding or changing a feature in an application in n-tire architecture, we are typically touching many "layers" in an application. We are changing the user interface, adding fields to models, modifying validation, and so on. Instead of coupling across a layer, we couple vertically along a slice. We `minimize coupling` `between slices`, and `maximize coupling` `in a slice`.
-
-With this approach, each of our vertical slices can decide for itself how to best fulfill the request. New features only add code, we're not changing shared code and worrying about side effects.
-
-<div align="center">
-  <img src="./assets/vertical-slice-architecture.png" />
-</div>
-
-Instead of grouping related action methods in one controller, as found in traditional controllers, I used the [REPR pattern](https://deviq.com/design-patterns/repr-design-pattern). Each action gets its own small endpoint, consisting of a route, the action, and an `IMediator` instance. The request is passed to the `IMediator` instance, routed through a [`Mediator pipeline`](https://lostechies.com/jimmybogard/2014/09/09/tackling-cross-cutting-concerns-with-a-mediator-pipeline/) where custom middleware can log, validate and intercept requests. The request is then handled by a request specific `IRequestHandler` which performs business logic before returning the result.
-
-The use of the [mediator pattern](https://dotnetcoretutorials.com/2019/04/30/the-mediator-pattern-in-net-core-part-1-whats-a-mediator/) in my controllers creates clean and thin controllers. By separating action logic into individual handlers we support the [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single_responsibility_principle) and [Don't Repeat Yourself principles](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), this is because traditional controllers tend to become bloated with large action methods and several injected `Services` only being used by a few methods.
-
-I used CQRS to decompose my features into small parts that makes our application:
-
-- Maximize performance, scalability and simplicity.
-- Easy to maintain and add features to. Changes only affect one command or query, avoiding breaking changes or creating side effects.
-- It gives us better separation of concerns and cross-cutting concern (with help of mediator behavior pipelines), instead of bloated service classes doing many things.
-
-Using the CQRS pattern, we cut each business functionality into vertical slices, for each of these slices we group classes (see [technical folders structure](http://www.kamilgrzybek.com/design/feature-folders)) specific to that feature together (command, handlers, infrastructure, repository, controllers, etc). In our CQRS pattern each command/query handler is a separate slice. This is where you can reduce coupling between layers. Each handler can be a separated code unit, even copy/pasted. Thanks to that, we can tune down the specific method to not follow general conventions (e.g. use custom SQL query or even different storage). In a traditional layered architecture, when we change the core generic mechanism in one layer, it can impact all methods.
-
-
-## How to Run
-
-> ### Docker Compose
-
-Use the command below to run our `infrastructure` with `docker` using the `docker-compose.infrastructure.yaml` file at the root of the app:
-```
-docker-compose -f ./deployments/docker-compose/docker-compose.infrastructure.yaml up -d
+```mermaid
+flowchart LR
+    UI[Frontend / REST client] -->|HTTP + Bearer JWT| GW[API Gateway :8081]
+    GW -->|validates JWT| KC[(Keycloak :8080)]
+    GW --> FL[Flight service :8082]
+    GW --> PA[Passenger service :8083]
+    GW --> BO[Booking service :8084]
+    BO -. gRPC .-> FL
+    BO -. gRPC .-> PA
+    FL --> PGF[(Postgres flight_write)]
+    FL --> MGF[(Mongo flight_read)]
+    PA --> PGP[(Postgres passenger_write)]
+    PA --> MGP[(Mongo passenger_read)]
+    BO --> PGB[(Postgres booking_write)]
+    BO --> MGB[(Mongo booking_read)]
+    FL & PA & BO -->|outbox| MQ{{RabbitMQ}}
 ```
 
-> ### Build
-To `build` all microservices, run this command in the `root` of each microservice where the `pom.xml` file is located:
+### Services and ports
+
+| Component | Port | Responsibility |
+| :--- | :--- | :--- |
+| **API Gateway** (Spring Cloud Gateway) | `8081` | Single entry point. Validates JWTs, applies the CORS allow-list and the public-path rules, forwards `/api/v1/flight/**`, `/passenger/**`, `/booking/**` with the bearer token. |
+| **Flight service** | `8082`, gRPC `9092` | Flights, seats, airports, aircraft, city-to-city search. |
+| **Passenger service** | `8083`, gRPC `9093` | A user's saved travellers. |
+| **Booking service** | `8084`, gRPC `9094` | Bookings. Asks Flight and Passenger over gRPC; owns no flight or passenger data. |
+| **Keycloak** | `8080` | Identity provider. Realm `keycloak-realm`, imported from `deployments/configs/keycloak`. |
+| **PostgreSQL 17** | `5432` | Write side, one database per service. |
+| **MongoDB** | `27017` | Read side, one database per service. |
+| **RabbitMQ** | `5672`, UI `15672` | Integration events. |
+| Observability (optional) | various | OpenTelemetry collector, Jaeger/Zipkin/Tempo, Prometheus + Grafana, Loki, Elasticsearch + Kibana, cAdvisor (host port `8088`). Not needed to run the system. |
+
+Every service owns its data: there are no cross-service database reads or foreign keys, only IDs. A booking therefore stores a snapshot of what it needs from the flight (number, times, price, seat, airports).
+
+### Write side and read side
+
+Each service keeps two copies of its data (CQRS):
+
+- **Write side, PostgreSQL** (JPA, Flyway migrations in `src/main/resources/db/migration`): the source of truth. Every command saves here.
+- **Read side, MongoDB**: shaped for the `GET` endpoints. A command's domain events are stored in an **outbox table** (`persist_messages`) in the same transaction; a background job (every second) turns them into internal commands that update Mongo, and publishes the integration events to RabbitMQ.
+
+So **reads lag writes by about 1 to 3 seconds**. Clients should expect that after a write (use the `POST` response, or retry briefly).
+
+### How the services communicate
+
+| Style | Used for |
+| :--- | :--- |
+| **REST through the gateway** | Everything the frontend does. |
+| **gRPC (synchronous)** | Booking asks Flight (`GetById`, `GetAvailableSeats`, `ReserveSeat`, `ReleaseSeat`) and Passenger (`GetById`, which also returns the owner's id). Contracts are `flight.proto` and `passenger.proto`; the producing and the consuming service keep identical copies. |
+| **Domain event, then internal command** | Inside one service: Postgres change, then Mongo update (the projection). |
+| **RabbitMQ integration events (outbox)** | `FlightCreated`, `SeatCreated`, `SeatReserved`, `SeatReleased`, `AirportCreated`, `AircraftCreated`, `PassengerCreated`, `PassengerUpdated`, `BookingCreated`, `BookingCancelled`... published through the outbox to one fanout exchange per service (`flight`, `passenger`, `booking`). Nothing consumes them yet (the passenger service has a listener that only logs). |
+
+### Data model
+
+PostgreSQL tables (write side). Every table also has `id`, audit columns, `version` (optimistic locking) and `is_deleted` (soft delete); there are no foreign keys, only IDs.
+
+| Service | Table | Main columns |
+| :--- | :--- | :--- |
+| Flight | `flights` | `flight_number`, `departure_date`, `arrive_date`, `duration_minutes`, `flight_date`, `status`, `price`, `aircraft_id`, `departure_airport_id`, `arrive_airport_id` |
+| Flight | `seats` | `seat_number`, `type` (window / middle / aisle), `seat_class`, `flight_id`. **One row = one physical seat on one flight.** `is_deleted = true` means *reserved*. Unique on (`flight_id`, `seat_number`). |
+| Flight | `airports` | `name`, `code`, `address`, `city`, `region`, `country` |
+| Flight | `aircrafts` | `name`, `model`, `manufacturing_year` |
+| Passenger | `passengers` | `user_id` (owner = token `sub`), `name`, `passport_number`, `passenger_type`, `age`. Passport unique per owner. |
+| Booking | `bookings` | `user_id` (owner), `status` (Confirmed / Cancelled), `name` (passenger name copy), `flight_id`, `flight_number`, `aircraft_id`, `departure_airport_id`, `arrive_airport_id`, `flight_date`, `departure_date`, `arrive_date`, `price` (price paid), `seat_number`, `description` |
+| all | `persist_messages` | the outbox / inbox |
+
+MongoDB holds the same entities as documents (`flights`, `seats`, `airports`, `aircrafts`, `passengers`, `bookings`) in `flight_read`, `passenger_read` and `booking_read`.
+
+### Authentication and authorization
+
+- **OIDC via Keycloak**, realm `keycloak-realm`. Services validate the JWT with Keycloak's JWKS endpoint; roles come from `realm_access.roles`.
+- **Roles:** `USER` (every self-registered user gets it) and `ADMIN`.
+- **Clients:** `travel-web` (public client for a browser frontend: authorization code flow with PKCE; redirect URIs `localhost:3000` and `localhost:5173`) and `booking-client-credentials` (secret `secret`, machine client whose token carries `ADMIN`; used by `booking.rest` and scripts).
+- **Demo users (local use only):** `admin` / `admin123`, `traveller` / `traveller123`.
+
+| Access | Endpoints |
+| :--- | :--- |
+| Public | `GET` flight list, flight by id, flight search, free seats, airports, aircraft |
+| `USER` or `ADMIN` | passengers (create, list, get, update), bookings (create, list, get, cancel) |
+| `ADMIN` | create/update/delete flights, create seats, reserve a seat, create airports and aircraft |
+
+**Ownership:** passengers and bookings belong to the user who created them. Asking for someone else's returns `404` (not `403`) so ids cannot be probed; admins can access all. A booking can only use a passenger owned by the person booking (admins excepted). A missing role returns `403`, a missing/invalid token `401`.
+
+### Key flows
+
+**Book a flight** (`POST /api/v1/booking`)
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant B as Booking service
+    participant F as Flight service
+    participant P as Passenger service
+    C->>B: POST /booking {passengerId, flightId} (via gateway)
+    B->>F: gRPC GetById (flight, price, times)
+    B->>P: gRPC GetById (passenger + owner)
+    B->>B: passenger must belong to the caller
+    B->>F: gRPC GetAvailableSeats, pick a free seat of this flight
+    B->>F: gRPC ReserveSeat (checked and locked in Postgres)
+    B->>B: save booking (price paid, owner, flight id, times, status Confirmed)
+    B-->>C: BookingDto
+```
+
+**Cancel** (`DELETE /api/v1/booking/{id}`): owner or admin; the booking becomes `Cancelled` (kept in the history) and `ReleaseSeat` frees the seat in the same transaction, so a failure leaves both unchanged.
+
+**Create a flight** (`POST /api/v1/flight`): the flight and `numberOfSeats` unreserved seats (`1A`, `1B` ... rows of `seatsPerRow`, default 6; window at both ends, aisle in the middle) are saved in one transaction; each seat raises the usual events that fill the read side.
+
+**Search** (`GET /api/v1/flight/search?from=Delhi&to=California`): `from` and `to` are matched (partial text, ignoring case) against airport name, code, city, region and country. Only upcoming flights that are not `Canceled` or `Completed` are returned, each with both airports, the aircraft and `seatsLeft`; optional `date`, `sort` (`departure`, `price`, `duration`), `page`, `size`.
+
+### Inside a service
+
+- **Vertical slices (REPR):** each use case is a folder `<aggregate>/features/<usecase>/` with its controller, request DTO, command or query, validator, handler, domain event and the Mongo command/handler. Slices share only models and mappings.
+  <div align="center"><img src="./assets/vertical-slice-architecture.png" /></div>
+- **Mediator pipeline:** controllers send a command or query to the mediator; every request passes logging, then validation (Spring `Validator` beans), then a transaction that, on success, dispatches the collected domain events to the outbox.
+- **DDD:** aggregates (`models`) are built from value objects (`valueobjects`) that validate themselves; JPA entities and Mongo documents are separate classes.
+- **Errors** are RFC 7807 ProblemDetails (`400` validation / gRPC failure, `401`, `403`, `404`, `409`, `500`).
+- **Shared code** lives in `src/buildingblocks` (mediator, outbox, Keycloak/security config, problem details, RabbitMQ, JPA/Mongo setup, test base classes). It is built first and consumed as a Maven dependency.
+
+## API summary
+
+All paths are through the gateway (`http://localhost:8081`). Times are ISO local date-times without a time zone, for example `2026-12-10T09:00:00`. Ready-made requests are in [booking.rest](./booking.rest); each service also serves Swagger UI at `/swagger-ui/index.html`.
+
+| Method and path | Access | Notes |
+| :--- | :--- | :--- |
+| `GET /api/v1/flight/search` | public | `from`, `to` required; `date`, `sort`, `page`, `size` optional; returns `{ items, total, page, size }` |
+| `GET /api/v1/flight`, `GET /api/v1/flight/{id}` | public | all flights / one flight |
+| `GET /api/v1/flight/get-available-seats/{flightId}` | public | free seats |
+| `GET /api/v1/flight/airport` (+`/{id}`) | public | `q` (text), `city` (exact) |
+| `GET /api/v1/flight/aircraft` (+`/{id}`) | public | |
+| `POST /api/v1/flight` | admin | flight data plus `numberOfSeats` (1-1000, required) and optional `seatsPerRow` |
+| `PUT /api/v1/flight/{id}`, `DELETE /api/v1/flight/{id}` | admin | |
+| `POST /api/v1/flight/seat`, `POST /api/v1/flight/reserve-seat` | admin | |
+| `POST /api/v1/flight/airport` | admin | `name`, `code`, `address`, `city`, `country`, optional `region` |
+| `POST /api/v1/flight/aircraft` | admin | `name`, `model`, `manufacturingYear` (1900 or later) |
+| `POST /api/v1/passenger` | user | `name`, `passportNumber`, `passengerType` (`Male`/`Female`/`Baby`), `age` |
+| `GET /api/v1/passenger`, `GET /api/v1/passenger/{id}` | user | mine / one (owner or admin) |
+| `PUT /api/v1/passenger/{id}` | user | owner or admin |
+| `POST /api/v1/booking` | user | `passengerId`, `flightId`, `description`; the service assigns a free seat |
+| `GET /api/v1/booking`, `GET /api/v1/booking/{id}` | user | mine (newest trip first, cancelled included) / one |
+| `DELETE /api/v1/booking/{id}` | user | cancel and free the seat |
+
+## How to run
+
+**Prerequisites:** Java 21, Docker (Desktop or Engine). Maven is bundled (`./mvnw`).
+
 ```bash
-mvn clean install
+# 1. Infrastructure (only what the system needs; the full file also starts the monitoring stack)
+docker compose -f deployments/docker-compose/docker-compose.infrastructure.yaml up -d rabbitmq postgres mongo keycloak
+
+# 2. One-time: create the write databases (compose does not create them)
+for db in flight_write passenger_write booking_write; do docker exec postgres psql -U postgres -c "CREATE DATABASE $db"; done
+
+# 3. Build: the shared module first, then the services and the gateway
+(cd src/buildingblocks && ./mvnw clean install)
+for m in src/services/flight src/services/passenger src/services/booking src/apigateway; do (cd $m && ./mvnw clean install); done
+
+# 4. Run each one (own terminal), from its folder
+java -jar target/flight-1.0.0.jar          # likewise passenger-1.0.0.jar, booking-1.0.0.jar, apigateway-1.0.0.jar
 ```
 
-> ### Run
-To `run` each microservice, run this command in the `root` of each microservice where the `pom.xml` file is located:
+- The first start applies the Flyway migrations and **seeds demo data** into empty databases: 6 airports (Lisbon, Sao Paulo, Delhi, Los Angeles, San Francisco, San Diego), 3 aircraft, 9 flights (8 upcoming, with 120-180 seats each, dated relative to the first start), and one test passenger without an owner (admin only). To get fresh demo dates, drop the flight databases (Postgres and Mongo) and restart the flight service.
+- **Log in:** get a token from `http://localhost:8080/realms/keycloak-realm/protocol/openid-connect/token`. For scripts use the client-credentials client (see the `Authenticate` request in `booking.rest`); a browser frontend should use the `travel-web` client with the authorization code flow and PKCE. Keycloak admin console: `http://localhost:8080` (`admin` / `admin`).
+- Missing tracing collector? The services log OpenTelemetry export errors when the optional monitoring stack is not running; they are harmless.
+
+## Configuration
+
+| Property | Where | Meaning |
+| :--- | :--- | :--- |
+| `app.cors.allowed-origins` | gateway | Comma-separated browser origins allowed to call the API (default `http://localhost:3000,http://localhost:5173`). Set your real site here before deploying. |
+| `app.security.public-get-paths` | gateway **and** flight `application.yml` | GET path patterns that need no login. Keep both in sync. |
+| `spring.rabbitmq.template.exchange` / `exchange-type` | each service | The service's integration-event exchange. |
+| `spring.security.oauth2.resourceserver.jwt.jwk-set-uri` | each service and gateway | Keycloak JWKS URL. |
+
+Defaults and demo credentials (`admin/admin123`, `traveller/traveller123`, client secret `secret`, Postgres `postgres/postgres`) are for local development only; change them before any real deployment.
+
+## Testing
+
 ```bash
-mvn spring-boot:run
+# unit tests of one module (no Docker needed)
+./mvnw test -Dtest='**.unittest.**' -Dsurefire.failIfNoSpecifiedTests=false
+
+# one test class
+./mvnw test -Dtest=CreateBookingTests
+
+# also the integration and end-to-end tests (flight service; they start Postgres, MongoDB and RabbitMQ with Testcontainers)
+./mvnw test -DargLine="-Dapi.version=1.44"
 ```
 
-> ### Test
+Docker Engine 29 and newer rejects the old Docker API version used by Testcontainers 1.20.4, so the Docker-based tests need `-Dapi.version=1.44` (or an upgrade of Testcontainers). At the time of writing there are 101 unit tests (buildingblocks 9, flight 52, passenger 16, booking 19, gateway 5) and 2 Docker-based tests, all passing. The full flow was also verified by calling the running system through the gateway with real Keycloak tokens.
 
-To `test` all microservices, run this command in the `root` of each microservice where the `pom.xml` file is located:
-```bash
-dotnet test
+## Project structure
+
+```text
+.
+├── booking.rest                      sample requests (VS Code REST Client)
+├── deployments
+│   ├── docker-compose                infrastructure compose file
+│   └── configs                       keycloak realm, prometheus, grafana, loki, tempo, otel collector
+└── src
+    ├── apigateway                    Spring Cloud Gateway (security, CORS, routing)
+    ├── buildingblocks                shared library: mediator, outbox, security, errors, rabbitmq, test base
+    └── services
+        ├── flight                    flights, seats, airports, aircraft, search   (proto, migrations, seeds, grpcserver)
+        ├── passenger                 travellers                                   (proto, migrations, grpcserver)
+        └── booking                   bookings                                     (proto copies, migrations, grpcclient)
 ```
 
-> ### Documentation Apis
+## Technologies
 
-Each microservice provides `API documentation` and navigate to `/swagger-ui/index.html` to visit list of endpoints.
+Spring Boot 3.4 (MVC) and Spring Cloud Gateway · Spring Security (OAuth2 resource server) with Keycloak · Spring Data JPA (PostgreSQL) with Flyway and QueryDSL · Spring Data MongoDB · Spring AMQP (RabbitMQ) · gRPC (grpc-spring) and Protocol Buffers · springdoc OpenAPI · OpenTelemetry · Lombok · UUID Creator · JUnit 5, Mockito, AssertJ and Testcontainers.
 
-As part of API testing, I created the [booking.rest](./booking.rest) file which can be run with the [REST Client](https://github.com/Huachao/vscode-restclient) `VSCode plugin`.
+## Recent changes
 
-# Support
+This version turned the sample into a backend a travel website can use. Summary of what was added or fixed:
 
-If you like my work, feel free to:
+- **Auth:** public browsing; `USER` / `ADMIN` roles; Keycloak in docker-compose with an importable realm (sign-up, a PKCE client for browsers, a machine client); gateway CORS allow-list.
+- **Flights:** `GET /flight/search` (city-to-city, contains matching, upcoming only, seats left, sort, paging); airports with city, region and country; airport and aircraft read endpoints; `POST /flight` creates the flight's seats; demo flights and seats in the seed data.
+- **Seats and bookings:** the booking price is the flight's price (was hard-coded to 1); seats are unique per flight and must belong to an existing flight; a booking only uses seats of its own flight; bookings have an owner, status, flight id and departure/arrival times; list, get and cancel bookings (cancel frees the seat through a new gRPC `ReleaseSeat`).
+- **Passengers:** owned by their creator, `GET /passenger` (mine), `PUT /passenger/{id}`, passport unique per owner, a clean `404` instead of a `500`; booking requires the booker to own the passenger.
+- **Fixes found by running the whole system:** pinned Postgres 17 (latest no longer starts with the compose mount); Keycloak realm file naming and the default `USER` role; the event dispatcher scanned the whole classpath on every request (added about 0.8 s each, 17 s to create a 20-seat flight); the outbox waited 5 s per event for a reply that never came (new data took minutes to show up) and published to exchanges that did not exist; missing role now returns `403` instead of `500`; creating an airport or an aircraft always failed with `500`; the aircraft year check was inverted; the create-passenger JSON key was `PassportNumber` (now `passportNumber`).
+- **Docs and tests:** this README, 101 unit tests plus 2 Docker-based tests, and `booking.rest` samples for every endpoint.
 
-- ⭐ this repository. And we will be happy together :)
+## Known limitations
 
-Thanks a bunch for supporting me!
+- **Back-to-back bookings on one flight can fail for 1-3 seconds.** The booking service picks the first free seat from the read copy, which is a moment behind; retry after a short pause. A fix (pick among free seats and retry) is planned. Also, if saving a booking fails after its seat was reserved, that seat stays reserved.
+- **No seat choice:** the service assigns a free seat.
+- **No time zones:** all times are local as stored; durations are not recalculated.
+- One price per flight, no currency, Economy seats only; no payments, airlines, connecting flights or multi-passenger bookings; saved travellers cannot be deleted.
+- Search uses partial-text matching, so short words match many places (`san` matches San Diego, San Francisco and Sao Paulo).
+- Passengers and bookings created before ownership existed have no owner (admin only, and such bookings cannot be cancelled); seeds only run on empty databases.
+- RabbitMQ events are published but not consumed (the passenger service's `FlightUpdatedListener` listens on a different exchange and only logs).
+- Domain events are kept in a static list shared by all requests, so two commands running at the same moment could mix events.
 
-## Contribution
+## Contribution, license and credits
 
-Thanks to all contributors, you're awesome and this wouldn't be possible without you! The goal is to build a categorized, community-driven collection of very well-known resources.
+Contributions are welcome: please follow the [contribution guideline](./CONTRIBUTION.md). Licensed under the terms in [LICENSE](./LICENSE).
 
-Please follow this [contribution guideline](./CONTRIBUTION.md) to submit a pull request or create the issue.
-
-## Project References & Credits
+Project references and credits (from the original sample):
 
 - [https://github.com/jbogard/ContosoUniversityDotNetCore-Pages](https://github.com/jbogard/ContosoUniversityDotNetCore-Pages)
 - [https://github.com/kgrzybek/modular-monolith-with-ddd](https://github.com/kgrzybek/modular-monolith-with-ddd)

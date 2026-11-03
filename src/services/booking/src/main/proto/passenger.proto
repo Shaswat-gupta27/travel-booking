@@ -16,6 +16,7 @@ message PassengerResponseDto {
   string PassportNumber = 3;
   PassengerType PassengerType = 4;
   int32 Age = 5;
+  string UserId = 6;
 }
 
 

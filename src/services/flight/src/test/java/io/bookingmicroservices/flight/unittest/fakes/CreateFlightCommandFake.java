@@ -9,6 +9,10 @@ import java.util.UUID;
 
 public class CreateFlightCommandFake {
   public static CreateFlightCommand generate() {
+    return generate(180, 6);
+  }
+
+  public static CreateFlightCommand generate(int numberOfSeats, int seatsPerRow) {
     return new CreateFlightCommand(
       UuidCreator.getTimeOrderedEpoch(),
       "20H50",
@@ -20,7 +24,9 @@ public class CreateFlightCommandFake {
       new BigDecimal(120),
       LocalDateTime.now(),
       FlightStatus.Flying,
-      new BigDecimal(200L)
+      new BigDecimal(200L),
+      numberOfSeats,
+      seatsPerRow
     );
   }
 }

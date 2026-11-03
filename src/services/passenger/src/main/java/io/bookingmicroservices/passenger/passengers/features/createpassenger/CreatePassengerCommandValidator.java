@@ -26,6 +26,10 @@ public class CreatePassengerCommandValidator implements Validator {
             errors.rejectValue("name", "name.required", "Name is required");
         }
 
+        if (command.userId() == null || command.userId().isBlank()) {
+            errors.rejectValue("userId", "userId.required", "User ID is required");
+        }
+
         if (command.age() <= 0) {
             errors.rejectValue("age", "age.invalid", "Age must be greater than 0");
         }

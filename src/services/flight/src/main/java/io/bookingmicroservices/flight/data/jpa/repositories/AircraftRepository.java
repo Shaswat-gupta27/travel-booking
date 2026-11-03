@@ -1,5 +1,7 @@
 package io.bookingmicroservices.flight.data.jpa.repositories;
 
+import io.bookingmicroservices.flight.aircrafts.valueobjects.Model;
+
 import io.bookingmicroservices.flight.aircrafts.features.Mappings;
 import io.bookingmicroservices.flight.aircrafts.models.Aircraft;
 import io.bookingmicroservices.flight.data.jpa.entities.AircraftEntity;
@@ -11,5 +13,5 @@ import java.util.UUID;
 
 @Repository
 public interface AircraftRepository extends JpaRepository<AircraftEntity, UUID> {
-  AircraftEntity findAircraftByModelAndIsDeletedFalse(String model);
+  AircraftEntity findAircraftByModelAndIsDeletedFalse(Model model);
 }
